@@ -1,0 +1,207 @@
+<!-- reminders.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reminders ⏰</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyaWxlcnJ5dWRubXlrcndtdWh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTU2MDQsImV4cCI6MjA2ODU5MTYwNH0.VU9Eey3U8J_dvurgBPeErZk2YGKkDyXVlCC62XFoxh4";
+  const supabaseUrl = "https://zrilerrrudnmykrwmuhy.supabase.co";
+  const supabase = supabase.createClient(
+    "https://your-project-url.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyaWxlcnJ5dWRubXlrcndtdWh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTU2MDQsImV4cCI6MjA2ODU5MTYwNH0.VU9Eey3U8J_dvurgBPeErZk2YGKkDyXVlCC62XFoxh4"
+  );
+
+  async function sendNote(fromUser, toUser, message) {
+    await supabase.from("notes").insert([
+      { from: fromUser, to: toUser, content: message }
+    ]);
+  }
+</script>
+
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffd6f3, #ffe6f7);
+      font-family: 'Gloria Hallelujah', cursive;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff0fa;
+      border-radius: 2rem;
+      box-shadow: 0 0 20px #f0c0e0;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      color: #ff69b4;
+      margin-bottom: 0.5rem;
+    }
+
+    .affirmation {
+      font-size: 1rem;
+      color: #8c3f69;
+      margin-bottom: 1.5rem;
+    }
+
+    .reminder-box textarea,
+    .reminder-box input[type="time"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #ffaadd;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #fff8fd;
+      resize: none;
+    }
+
+    .reminder-box button {
+      background-color: #ff8ecf;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s;
+    }
+
+    .reminder-box button:hover {
+      background: #ff65b3;
+      transform: scale(1.05);
+    }
+
+    .daily-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .saved-reminders {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reminder-item {
+      background-color: #ffe0f5;
+      border-radius: 15px;
+      padding: 10px;
+      font-size: 1rem;
+      color: #660033;
+      box-shadow: 2px 2px 10px #f2a2c0;
+      animation: popIn 0.4s ease-in;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .reminder-item button {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #cc0044;
+    }
+
+    .back-btn {
+      margin-top: 30px;
+    }
+
+    .btn {
+      background: #ffd1ec;
+      padding: 8px 20px;
+      border-radius: 1rem;
+      text-decoration: none;
+      color: #5c1a3a;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(255, 0, 128, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #ffb3dd;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1 class="title">⏰ Kawaii Reminders</h1>
+    <p class="affirmation">A tiny bell for your tiny goals 🔔</p>
+
+    <div class="reminder-box">
+      <textarea id="reminderText" placeholder="What's your sweet reminder today? 🐣"></textarea>
+      <input type="time" id="reminderTime" />
+      <label class="daily-check">
+        <input type="checkbox" id="repeatDaily" /> Repeat Daily 🌞
+      </label>
+      <button onclick="saveReminder()">Save Reminder 💾</button>
+    </div>
+
+    <div class="saved-reminders" id="savedReminders"></div>
+
+    <div class="back-btn">
+      <a href="index.html" class="btn">← Back</a>
+    </div>
+  </div>
+
+  <script>
+    function saveReminder() {
+      const text = document.getElementById("reminderText").value.trim();
+      const time = document.getElementById("reminderTime").value;
+      const repeat = document.getElementById("repeatDaily").checked;
+      if (!text || !time) return;
+      const reminder = { text, time, repeat };
+      const saved = JSON.parse(localStorage.getItem("kawaiiReminders") || "[]");
+      saved.push(reminder);
+      localStorage.setItem("kawaiiReminders", JSON.stringify(saved));
+      loadReminders();
+      document.getElementById("reminderText").value = "";
+      document.getElementById("reminderTime").value = "";
+      document.getElementById("repeatDaily").checked = false;
+    }
+
+    function loadReminders() {
+      const saved = JSON.parse(localStorage.getItem("kawaiiReminders") || "[]");
+      const container = document.getElementById("savedReminders");
+      container.innerHTML = "";
+      saved.forEach((r, i) => {
+        const div = document.createElement("div");
+        div.className = "reminder-item";
+        div.innerHTML = `⏰ ${r.text} at ${r.time} ${r.repeat ? "(Daily)" : ""} <button onclick="deleteReminder(${i})">❌</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteReminder(index) {
+      const saved = JSON.parse(localStorage.getItem("kawaiiReminders") || "[]");
+      saved.splice(index, 1);
+      localStorage.setItem("kawaiiReminders", JSON.stringify(saved));
+      loadReminders();
+    }
+
+    window.onload = loadReminders;
+  </script>
+</body>
+</html>

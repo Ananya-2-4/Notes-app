@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cute Checklist 🐾</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyaWxlcnJ5dWRubXlrcndtdWh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTU2MDQsImV4cCI6MjA2ODU5MTYwNH0.VU9Eey3U8J_dvurgBPeErZk2YGKkDyXVlCC62XFoxh4";
+  const supabaseUrl = "https://zrilerrrudnmykrwmuhy.supabase.co";
+
+  const supabase = supabase.createClient(
+    "https://your-project-url.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyaWxlcnJ5dWRubXlrcndtdWh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMTU2MDQsImV4cCI6MjA2ODU5MTYwNH0.VU9Eey3U8J_dvurgBPeErZk2YGKkDyXVlCC62XFoxh4"
+  );
+
+  async function sendNote(fromUser, toUser, message) {
+    await supabase.from("notes").insert([
+      { from: fromUser, to: toUser, content: message }
+    ]);
+  }
+</script>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Gloria Hallelujah", cursive;
+      background: linear-gradient(135deg, #ffd1dc, #ffe4ec);
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+      position: relative;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      color: #ff69b4;
+    }
+
+    .affirmation {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      color: #cc3366;
+    }
+
+    .checklist-section {
+      background: #fff0f5;
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 0 10px #ffb6c1;
+    }
+
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      color: #663366;
+    }
+
+    .task-item input {
+      margin-right: 1rem;
+      accent-color: #ff69b4;
+    }
+
+    .task-item span.done {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    .task-input-group {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .task-input-group input {
+      padding: 0.5rem;
+      border-radius: 1rem 0 0 1rem;
+      border: 2px solid #ff99cc;
+      width: 60%;
+      font-size: 1rem;
+    }
+
+    .task-input-group button {
+      background-color: #ff99cc;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0 1rem 1rem 0;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .task-input-group button:hover {
+      background-color: #ff69b4;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      text-decoration: none;
+      color: white;
+      background-color: #cc6699;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+      display: inline-block;
+    }
+
+    /* Floating hearts */
+    .floating-heart {
+      position: fixed;
+      bottom: -50px;
+      animation: floatUp 8s infinite ease-in;
+      font-size: 2rem;
+      opacity: 0.7;
+    }
+
+    .floating-heart:nth-child(1) {
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .floating-heart:nth-child(2) {
+      left: 50%;
+      animation-delay: 2s;
+    }
+
+    .floating-heart:nth-child(3) {
+      left: 80%;
+      animation-delay: 4s;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-200px) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-400px) scale(0.9);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1 class="title">📝 My Checklist</h1>
+    <p class="affirmation">Small steps are still progress! ✨</p>
+
+    <div class="checklist-section">
+      <ul id="taskList" class="task-list"></ul>
+      <div class="task-input-group">
+        <input type="text" id="taskInput" placeholder="Add something cute..." />
+        <button onclick="addTask()">Add 🐾</button>
+      </div>
+    </div>
+
+    <a href="index.html" class="btn">← Back</a>
+  </div>
+
+  <!-- Animated hearts -->
+  <div class="floating-heart">💖</div>
+  <div class="floating-heart">💗</div>
+  <div class="floating-heart">💞</div>
+
+  <script>
+    const taskList = document.getElementById("taskList");
+    const taskInput = document.getElementById("taskInput");
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text === "") return;
+
+      const li = document.createElement("li");
+      li.classList.add("task-item");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+
+      const span = document.createElement("span");
+      span.innerText = text;
+
+      checkbox.addEventListener("change", () => {
+        span.classList.toggle("done");
+        saveTasks();
+      });
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      taskList.appendChild(li);
+
+      taskInput.value = "";
+      saveTasks();
+    }
+
+    function saveTasks() {
+      const tasks = [];
+      taskList.querySelectorAll("li").forEach((li) => {
+        tasks.push({
+          text: li.querySelector("span").innerText,
+          checked: li.querySelector("input").checked,
+        });
+      });
+      localStorage.setItem("cuteTasks", JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+      const saved = JSON.parse(localStorage.getItem("cuteTasks") || "[]");
+      saved.forEach((task) => {
+        taskInput.value = task.text;
+        addTask();
+        const lastTask = taskList.lastChild;
+        lastTask.querySelector("input").checked = task.checked;
+        if (task.checked) {
+          lastTask.querySelector("span").classList.add("done");
+        }
+      });
+      taskInput.value = "";
+    }
+
+    window.onload = loadTasks;
+  </script>
+</body>
+</html>

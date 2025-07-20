@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💌 Cute Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #ffeaf7;
+      font-family: 'Architects Daughter', cursive;
+      color: #d63384;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+    }
+
+    textarea {
+      width: 250px;
+      height: 60px;
+      border-radius: 10px;
+      padding: 10px;
+      border: 2px dashed #ff99cc;
+      font-family: 'Architects Daughter', cursive;
+      resize: none;
+      background-color: #fff0f7;
+      font-size: 1rem;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 20px;
+      border: none;
+      background-color: #ffb6d9;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      color: #6a1b4d;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #noteContainer {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .note {
+      width: 180px;
+      min-height: 100px;
+      background-color: #fff6fa;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 4px 4px 8px rgba(255, 192, 203, 0.6);
+      animation: popUp 0.5s ease-in-out;
+      position: relative;
+      font-size: 1rem;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+
+    .note::before {
+      content: '💗';
+      position: absolute;
+      top: 5px;
+      right: 10px;
+    }
+
+    @keyframes popUp {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 1rem;
+      text-decoration: none;
+      color: #8e24aa;
+      border-bottom: 1px dashed #c2185b;
+    }
+
+    a:hover {
+      color: #d81b60;
+    }
+  </style>
+</head>
+<body>
+  <h1>💌 Cute Notes</h1>
+  <p>Leave sweet messages or write down your favorite thoughts! ✨</p>
+
+  <textarea id="noteInput" placeholder="Write something cute... 🐾"></textarea><br>
+  <button onclick="addNote()">➕ Add Note</button>
+
+  <div id="noteContainer"></div>
+
+  <a href="index.html">← Back to Home</a>
+
+  <script>
+    function addNote() {
+      const input = document.getElementById("noteInput");
+      const container = document.getElementById("noteContainer");
+
+      if (input.value.trim() !== "") {
+        const note = document.createElement("div");
+        note.className = "note";
+        note.textContent = input.value;
+        container.appendChild(note);
+        input.value = "";
+      }
+    }
+  </script>
+</body>
+</html>
